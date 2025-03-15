@@ -5,6 +5,7 @@
     [ 
       ./hardware-configuration.nix
       <home-manager/nixos>
+      ./common.nix
     ];
 
 #  imports = [ <home-manager/nixos> ];
@@ -59,10 +60,10 @@
   networking.networkmanager.enable = true;
 
   # Set your time zone.
-  time.timeZone = "Europe/Copenhagen";
+#  time.timeZone = "Europe/Copenhagen";
 
   # Select internationalisation properties.
-  i18n.defaultLocale = "en_DK.UTF-8";
+#  i18n.defaultLocale = "en_DK.UTF-8";
 
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "da_DK.UTF-8";
