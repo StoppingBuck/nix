@@ -7,6 +7,7 @@
   # Enable networking
   networking.networkmanager.enable = true;
 
+  # Locale
   time.timeZone = "Europe/Copenhagen";
   i18n.defaultLocale = "en_DK.UTF-8";
   i18n.extraLocaleSettings = {
@@ -25,10 +26,9 @@
     layout = "dk";
     variant = "";
   };
-  # Configure console keymap
-  console.keyMap = "dk-latin1";
+  console.keyMap = "dk-latin1"; # Configure console keymap
 
-  # Enable sound with pipewire.
+  # Sound with pipewire
   hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
@@ -38,10 +38,10 @@
     pulse.enable = true;
   };
 
-  # Allow unfree packages
+  # Allow unfree packages for Nix system-level
   nixpkgs.config.allowUnfree = true;
 
-  system.stateVersion = "24.11"; # Did you read the comment?
+  system.stateVersion = "24.11"; # Do not change this unless you want things to go wonky
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.mpr = {

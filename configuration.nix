@@ -8,21 +8,29 @@
       ./common.nix
     ];
 
-#  imports = [ <home-manager/nixos> ];
-
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-#  users.users.mpr = {
-#    isNormalUser = true;
-#    description = "Mads Peter Rommedahl";
-#    extraGroups = [ "networkmanager" "wheel" ];
-#  };
-
+########
+# START -- Home Manager
+########
+# Home Manager is like Nix, but specifically for your /home
+# It can be used to set dotfiles, user packages, etc.
+########
   home-manager.users.mpr = { pkgs, ... }: {
-    nixpkgs.config.allowUnfree = true;
-    
-#    Use home.packages if you want to install a program but don't need any special configuration or integration with the NixOS/Home Manager ecosystem.
+    nixpkgs.config.allowUnfree = true; # Allow unfree packages for home-manager
+
+########
+# Installing user packages
+# 
+# Installing user packages - that is, installing packages via home-manager - means making the packages available only to the specified user, and not system-wide.
+# This is generally a good idea for any packages that do not need system-wide privileges, such as most UI-based applications. Keeping packages restricted to a user improves security.
+# On the other hand, if you could see yourself running a package with sudo or as root - such as with a lot of CLI-based applications like zsh or vim - they should instead be installed as system packages
+####
+# Installing user packages (unmanaged)
+#
+# This approach is used if you want to install a user package, but don't need any special configuration or integration with the NixOS/Home Manager ecosystem. Home-manager doesn't care about these packages beyond installing them
+# If in doubt, this is the place to use
+########
     home.packages = with pkgs; [
       brave
       discord
@@ -31,64 +39,72 @@
       mpv
       obsidian
       vscode
+      youtube-music
     ];
 
-    # Use programs.<program>.enable if you want more advanced configuration and integration, such as configuring the program’s settings, applying security patches, or adjusting system settings specific to the application.
+########
+# Installing user packages (managed)
+# Use programs.<program>.enable if you want more advanced configuration and integration, such as configuring the program’s settings, applying security patches, or adjusting system settings specific to the application.
+# This causes home-manager to take over managing the package and its options. For a list of available options, check https://home-manager-options.extranix.com
+########
     programs.zsh.enable = true;
 
     home.stateVersion = "24.11"; 
 
   };
-  
+
+########
+# END -- Home Manager
+########
+
+########
+# Installing system packages
+# As mentioned above, if you can see yourself using sudo or root in conjunction with a package, that's a good indication you should install it as a system package.
+# These are installed by NixOS, they have nothing to do with home-manager and they are available for everyone using the system.
+# Just like with the user packages installed by home-manager, system packages can be installed either unmanaged or managed (by NixOS).
+#
+# Installing system packages (unmanaged)
+########
   environment.systemPackages = with pkgs; [
     git
     gnome-tweaks
     gnomeExtensions.appindicator
     neovim
     pciutils
+    platinum-searcher
     wget
   ];
 
-  # Bootloader.
-#  boot.loader.systemd-boot.enable = true;
-#  boot.loader.efi.canTouchEfiVariables = true;
+########
+# Installing system packages and services (managed)
+########
+  services.locate.enable = true;
+  services.locate.package = pkgs.mlocate;
+  services.locate.localuser = null;
 
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
-  # Enable networking
-#  networking.networkmanager.enable = true;
+  # GNOME
+  services.xserver.displayManager.gdm.enable = true; # Gnome Display Manager
+  services.xserver.desktopManager.gnome.enable = true; # GNOME Shell
+  services.displayManager.autoLogin.enable = true;
+  services.displayManager.autoLogin.user = "mpr";
+  services.udev.packages = [ pkgs.gnome-settings-daemon ];
+  environment.variables.GNOME_SHELL_EXTENSIONS = "appindicator"; # Not sure if this is actually needed or not
+  # Workaround for GNOME autologin: https://github.com/NixOS/nixpkgs/issues/103746#issuecomment-945091229
+  systemd.services."getty@tty1".enable = false;
+  systemd.services."autovt@tty1".enable = false;
 
-  # Set your time zone.
-#  time.timeZone = "Europe/Copenhagen";
+  services.printing.enable = true; # Enable CUPS to print documents.
 
-  # Select internationalisation properties.
-#  i18n.defaultLocale = "en_DK.UTF-8";
-
-#  i18n.extraLocaleSettings = {
-#    LC_ADDRESS = "da_DK.UTF-8";
-#    LC_IDENTIFICATION = "da_DK.UTF-8";
-#    LC_MEASUREMENT = "da_DK.UTF-8";
-#    LC_MONETARY = "da_DK.UTF-8";
-#    LC_NAME = "da_DK.UTF-8";
-#    LC_NUMERIC = "da_DK.UTF-8";
-#    LC_PAPER = "da_DK.UTF-8";
-#    LC_TELEPHONE = "da_DK.UTF-8";
-#    LC_TIME = "da_DK.UTF-8";
-#  };
-
-  # Enable the X11 windowing system.
-#  services.xserver.enable = true;
-
-  # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
-
-  # Disable Nouveau
+########
+# NVIDIA
+########
+  # Disable Nouveau. Might not be needed.
   boot.blacklistedKernelModules = [ "nouveau" ];
   boot.kernelParams = [ "nomodeset" "modprobe.blacklist=nouveau" ];
 
-  
   # Enable OpenGL
   hardware.graphics = {
     enable = true;
@@ -97,8 +113,8 @@
   # Load nvidia driver for Xorg and Wayland
   services.xserver.videoDrivers = ["nvidia"];
 
+  # Settings for NVidia graphics cards
   hardware.nvidia = {
-
     # Modesetting is required.
     modesetting.enable = true;
 
@@ -112,72 +128,14 @@
     # Experimental and only works on modern Nvidia GPUs (Turing or newer).
     powerManagement.finegrained = false;
 
-    # Use the NVidia open source kernel module (not to be confused with the
-    # independent third-party "nouveau" open source driver).
-    # Support is limited to the Turing and later architectures. Full list of 
-    # supported GPUs is at: 
-    # https://github.com/NVIDIA/open-gpu-kernel-modules#compatible-gpus 
-    # Only available from driver 515.43.04+
+    # Setting this to false ensures we don't use the NVidia open source kernel module (not to be confused with the independent third-party "nouveau" open source driver).
+    # The NVidia open source kernel module is mainly relevant for data centers. It is not as good as the proprietary one.
     open = false;
 
-    # Enable the Nvidia settings menu,
-	# accessible via `nvidia-settings`.
+    # Enable the Nvidia settings menu accessible via `nvidia-settings`.
     nvidiaSettings = true;
 
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
     package = config.boot.kernelPackages.nvidiaPackages.latest;
   };
-
-  environment.variables.GNOME_SHELL_EXTENSIONS = "appindicator";
-
-  # Configure keymap in X11
-#  services.xserver.xkb = {
-#    layout = "dk";
-#    variant = "";
-#  };
-
-  # Configure console keymap
-#  console.keyMap = "dk-latin1";
-
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
-
-  # Enable sound with pipewire.
-#  hardware.pulseaudio.enable = false;
-#  security.rtkit.enable = true;
-#  services.pipewire = {
-#    enable = true;
-#    alsa.enable = true;
-#    alsa.support32Bit = true;
-#    pulse.enable = true;
-#  };
-
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
-
-
-  # Enable automatic login for the user.
-  services.displayManager.autoLogin.enable = true;
-  services.displayManager.autoLogin.user = "mpr";
-
-  # Workaround for GNOME autologin: https://github.com/NixOS/nixpkgs/issues/103746#issuecomment-945091229
-  systemd.services."getty@tty1".enable = false;
-  systemd.services."autovt@tty1".enable = false;
-
-  # Allow unfree packages
-#  nixpkgs.config.allowUnfree = true;
-
-
-  services.udev.packages = [ pkgs.gnome-settings-daemon ];
-
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-
-#  system.stateVersion = "24.11"; # Did you read the comment?
-
 }
