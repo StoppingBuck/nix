@@ -2,9 +2,12 @@
 
 {
   imports =
-    [ # Include the results of the hardware scan.
+    [ 
       ./hardware-configuration.nix
+      <home-manager/nixos>
     ];
+
+#  imports = [ <home-manager/nixos> ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
@@ -13,7 +16,13 @@
     isNormalUser = true;
     description = "Mads Peter Rommedahl";
     extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [
+  };
+
+  home-manager.users.mpr = { pkgs, ... }: {
+    nixpkgs.config.allowUnfree = true;
+    
+#    Use home.packages if you want to install a program but don't need any special configuration or integration with the NixOS/Home Manager ecosystem.
+    home.packages = with pkgs; [
       brave
       discord
       fractal
@@ -22,6 +31,12 @@
       obsidian
       vscode
     ];
+
+    # Use programs.<program>.enable if you want more advanced configuration and integration, such as configuring the program’s settings, applying security patches, or adjusting system settings specific to the application.
+    programs.zsh.enable = true;
+
+    home.stateVersion = "24.11"; 
+
   };
   
   environment.systemPackages = with pkgs; [
