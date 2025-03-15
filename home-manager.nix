@@ -47,8 +47,17 @@
       syntaxHighlighting.enable = true;
     
       shellAliases = {
-       ll = "ls -l";
-       update = "sudo nixos-rebuild switch";
+      ll = "ls -l";
+      "edit-config" = "function _edit_config() { sudo nvim /etc/nixos/\${1}.nix; }; _edit_config";
+
+      # Rebuild NixOS
+      rebuild-nixos="sudo sh -c 'cd /etc/nixos && nixos-rebuild switch'";
+
+      # Flake rebuild (if you use flakes)
+      "rebuild-flake" = "sudo nixos-rebuild switch --flake /etc/nixos#nixos";
+
+      # Change directory to /etc/nixos
+      "cd-nixos" = "cd /etc/nixos";
       };
       history.size = 10000;
 
