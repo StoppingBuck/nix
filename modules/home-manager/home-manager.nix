@@ -6,10 +6,13 @@
 # Home Manager is like Nix, but specifically for your /home
 # It can be used to set dotfiles, user packages, etc.
 ########
+  home-manager.useGlobalPkgs = true;
+  home-manager.useUserPackages = true;
   home-manager.users.mpr = { pkgs, ... }: {
 
     imports = [
       #./home/neovim.nix
+      ./hyprland.nix
       ./zsh.nix
       #./home/xdg.nix
       #./home/git.nix
@@ -17,14 +20,14 @@
       #./home/applications.nix
     ];
 
-    nixpkgs.config.allowUnfree = true; # Allow unfree packages for home-manager
     home.stateVersion = "24.11";
 
     home.sessionVariables = {
+
     };
-    xdg.enable = false;
+    xdg.enable          = false;
     xdg.userDirs.enable = true;
-    xdg.userDirs.music="/home/mpr/pCloudDrive/mp/music";
+    xdg.userDirs.music  ="/home/mpr/pCloudDrive/mp/music";
 
 #The reason you sometimes have home. and sometimes not is because Home Manager has its own namespace.
 #
@@ -45,6 +48,7 @@
 # This approach is used if you want to install a user package, but don't need any special configuration or integration with the NixOS/Home Manager ecosystem. Home-manager doesn't care about these packages beyond installing them
 # If in doubt, this is the place to use
 ########
+    nixpkgs.config.allowUnfree = true;  # Gør det eksplicit for Home Manager
     home.packages = with pkgs; [
       brave
       chatgpt-cli
@@ -52,10 +56,20 @@
       fractal
       keepassxc
       mpv
+      ncmpcpp
       obsidian
-      ventoy
       vscode
       youtube-music
+      #youtube-tui
+      #ytui-music
+      zsh-fzf-tab
+
+      # Hyprland
+      waybar  # Status bar
+      hyprlock
+      wofi  # App launcher
+      dunst  # Notifications
+      swww  # Wallpapers
     ];
 
 ########
@@ -71,7 +85,27 @@
       };
     };
 
-    
+    programs.firefox = {
+      enable = true;
+      policies = {
+        DisableTelemetry = false;           # I don't trust Mozilla not to be idiots, but I do trust them not to be evil
+        DisablePocket = false;              # I actually want to use Pocket. L'horreur!
+        DisableFirefoxStudies = true;       # No more Mr. Robot
+        DisableSponsoredTiles = true;       # TODO ???
+        DisableFormHistory = true;          # More of a hassle than it should be
+        NoDefaultBookmarks = true;          # No "Mozilla" bookmarks or other bollocks
+        OfferToSaveLogins = false;          # Go away, I use KeePass
+        SearchBar = "hidden";               # I use an omnibar
+        UserMessaging = {                   # Suppressing a bunch of situations where Firefox would say "Hey, we have this great thing..."
+          ExtensionRecommendations = false;
+          FeatureRecommendations = false;
+          FirefoxLabs = false;
+          MoreFromMozilla = false;
+          SkipOnboarding = true;
+          WhatsNew = false;
+        };
+      };
+    };
 
 ########
 # Configuration files - dotfiles
@@ -89,8 +123,12 @@
 #    };
 # Again, check https://home-manager-options.extranix.com to see what options are available
 
-    programs.kitty.enable = true; # required for the default Hyprland config
-
-
+programs.kitty = {
+    enable = true;
+    extraConfig = ''
+      map ctrl+left send_text all \x1b[1;5D
+      map ctrl+right send_text all \x1b[1;5C
+    '';
+  };
   };
 }
