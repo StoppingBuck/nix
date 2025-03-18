@@ -1,0 +1,100 @@
+Tanker om træ:
+
+
+Når du installerer NixOS, sætter du manuelt hostname én gang, f.eks.:
+
+hostnamectl set-hostname desktop
+
+og tilføjer det til /etc/nixos/configuration.nix (eller configuration.nix trækker det fra en eksisterende env-variabel).
+
+Derefter kan du bruge noget som dette i din configuration.nix:
+💡 Dynamisk host-afhængig konfiguration
+
+{ lib, ... }:
+let
+  host = builtins.getEnv "HOSTNAME";  # Hent hostname fra env
+in {
+  imports =
+    [ ./common.nix ]  # Alle hosts deler dette
+    ++ lib.optionals (host == "desktop") [ ./hosts/desktop.nix ]
+    ++ lib.optionals (host == "laptop") [ ./hosts/laptop.nix ];
+}
+
+🔥 Strukturen af dine filer
+
+📂 NixOS Config Repo
+
+/etc/nixos/
+├── configuration.nix  # Hovedkonfig
+├── common.nix         # Fælles indstillinger
+├── hosts/
+│   ├── desktop.nix    # Desktop-specifikke ting
+│   ├── laptop.nix     # Laptop-specifikke ting
+
+✅ Hvordan det virker
+
+    Ved installation sætter du hostname manuelt.
+    Når du rebooter, trækker configuration.nix det automatisk og henter de rigtige filer.
+    Nu kan du versionere configuration.nix i Git, og den vil automatisk vælge den rigtige konfiguration, afhængigt af maskinen.
+
+💡 Bonus: Hvis du bruger Home Manager, kan du bruge præcis samme trick til at håndtere bruger-specifikke configs!
+
+
+(præ-flakes. Den hovedpine tager vi senere)
+
+C = Common
+D = Desktop-only
+L = Laptop-only
+U = Unknown, could be separate settings
+
+C Locale and keymaps
+U Pipewire - scratching settings for D
+U Nvidia
+C Neovim
+C Hyprland
+C GNOME
+U Bootloader
+U System packages
+U Home Manager - packages
+C User
+C Zsh
+C Kitty
+CU Firefox  (graphics acceleration on laptop?)
+D mpv
+D mpd + client
+CU Cursor tweaks and other graphics stuff
+
+
+So basically:
+- Modules/Common
+-- Core (boot, GDM, Pipewire)
+-- User (locale, user, etc.)
+-- CLI tools
+-- GNOME
+-- Hyprland
+-- Neovim
+-- Zsh
+-- Kitty
+-- Firefox
+- Modules/Desktop
+-- Pipewire scratching
+-- Firefox tweaks ?
+-- Nvidia
+-- Multimedia
+- Modules/Laptop
+-- Whatever graphics and stuff
+-- Power management
+
+
+configuration => smol, start
+hardware-configuration => unmanaged
+modules
+=> home-manager
+=> => home-manager.nix
+=> => hyprland.nix
+=> => neovim.nix
+=> => zsh.nix
+=> system
+=> => common.nix
+=> => nvidia.nix
+=> => services.nix

@@ -1,6 +1,6 @@
 { config, pkgs, lib, ... }: {
 
-     home.file.".config/hypr/hyprland.conf".text = ''
+  home.file.".config/hypr/hyprland.conf".text = ''
     # Monitors
     monitor=DP-1,1920x1080@144Hz,0x0,1
     monitor=HDMI-A-1,1920x1080@60Hz,1920x0,1
@@ -70,5 +70,4 @@
         dots_center = true                # Center dots in field
     }
   '';
-
 }
