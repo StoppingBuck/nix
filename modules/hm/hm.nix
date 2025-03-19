@@ -61,13 +61,10 @@
       zsh-fzf-tab
 
       # Hyprland
-      dunst       # Notification daemon
-      grim        # Screenshot tool
+      grimblast   # Screenshot tool
       hypridle    # Auto-locking the screen
       hyprlock    # Lock screen
       hyprpaper   # Wallpaper daemon
-      #mako        # Notifikationer (Wayland) #TODO This AND dunst?
-      slurp       # Select region for screenshot
       waybar      # Status bar
       wlogout     #TODO ??
     ];
@@ -77,6 +74,19 @@
     # Use programs.<program>.enable if you want more advanced configuration and integration, such as configuring the program’s settings, applying security patches, or adjusting system settings specific to the application.
     # This causes home-manager to take over managing the package and its options. For a list of available options, check https://home-manager-options.extranix.com
     ########
+
+    services.mako = {
+      enable = true;
+      anchor = "top-right"; # Adjust position (e.g., "bottom-right", "center")
+      defaultTimeout = 5000; # Notification timeout in ms
+      maxVisible = 5; # Number of notifications visible at once
+      backgroundColor = "#282c34"; # Background color
+      textColor = "#ffffff"; # Text color
+      borderColor = "#61afef"; # Border color
+      borderSize = 2;
+      padding = "10";
+      font = "Monospace 14"; # Font size
+    };    
 
     programs.tealdeer = {
       enable = true;
@@ -226,6 +236,13 @@
         })
       ];
     };
+    
+    home.pointerCursor = {
+      package = pkgs.capitaine-cursors;
+      name = "Capitaine Cursors"; # Adjust based on theme choice
+      size = 24;
+    };
+    
     #TODO Nixyfy this
     home.file.".config/mpv/mpv.conf".text = ''
       fs-screen=current

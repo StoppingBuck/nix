@@ -13,7 +13,7 @@
     users.users.mpr.shell   = pkgs.zsh; # Make zsh the default shell. This is here, not in home-manager, because it requires root
 
     # Locale
-    console.keyMap              = "dk-latin1";          # Configure console keymap
+    console.keyMap              = "dk";          # Configure console keymap
     time.timeZone               = "Europe/Copenhagen";
     i18n.defaultLocale          = "en_DK.UTF-8";
     i18n.extraLocaleSettings    = {
@@ -28,8 +28,8 @@
       LC_TIME                   = "da_DK.UTF-8";
     };
 	
-	services.xserver.xkb.variant = "latin1";
     services.xserver.xkb = {
         layout  = "dk";
+        variant = "";
     };
 }

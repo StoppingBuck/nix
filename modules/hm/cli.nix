@@ -23,6 +23,7 @@
             edit-config             = "function _edit_config() { sudo nvim /etc/nixos/\${1}.nix; }; _edit_config";
             sudo-vscode             = "sudo env WAYLAND_DISPLAY=$WAYLAND_DISPLAY XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR /etc/profiles/per-user/mpr/bin/code --no-sandbox --user-data-dir=/root/.vscode-root";
             rebuild-nixos = ''
+                set -e  # Exit immediately if a command fails
                 echo "Starting NixOS rebuild..."
     sudo nixos-rebuild switch
 
@@ -35,7 +36,10 @@
     if pgrep -fi Hyprland > /dev/null; then
         echo "Hyprland detected, attempting reload..."
         hyprctl reload
-        pkill waybar && waybar &
+        pgrep waybar && pkill waybar
+        waybar & disown
+        pgrep mako && pkill mako
+        mako & disown
         echo "Hyprland reload complete!"
     else
         echo "Hyprland is not running or detected under a different name. Skipping reload."

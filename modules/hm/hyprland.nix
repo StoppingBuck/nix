@@ -18,6 +18,12 @@ input {
     kb_options = grp:alt_shift_toggle
 }
 
+exec-once = sleep 2 && gtk-launch pcloud
+
+    # Cursors
+    env = XCURSOR_THEME,capitaine-cursors
+    env = XCURSOR_SIZE,24
+
     # Monitors
     # Force monitor positions
     exec-once=hyprctl keyword monitor DVI-D-1,1920x1080@60Hz,0x0,1
@@ -31,6 +37,23 @@ input {
     bind=SUPER, V, togglefloating,
     bind=SUPER, SPACE, exec, swaylock
 
+    # Move focus between windows
+    bind=SUPER, Left, movefocus, l
+    bind=SUPER, Right, movefocus, r
+    bind=SUPER, Up, movefocus, u
+    bind=SUPER, Down, movefocus, d
+    # Vim-style
+    bind=SUPER, H, movefocus, l
+    bind=SUPER, L, movefocus, r
+    bind=SUPER, K, movefocus, u
+    bind=SUPER, J, movefocus, d
+
+    # Swaps places with the next window in focus.
+    bind=SUPER SHIFT, Left, swapwindow, l
+    bind=SUPER SHIFT, Right, swapwindow, r
+    bind=SUPER SHIFT, Up, swapwindow, u
+    bind=SUPER SHIFT, Down, swapwindow, d
+
     # Move between workspaces
     bind=SUPER, 1, workspace, 1
     bind=SUPER, 2, workspace, 2
@@ -43,6 +66,27 @@ input {
     bind=SUPER SHIFT, 3, movetoworkspace, 3
     bind=SUPER SHIFT, 4, movetoworkspace, 4
 
+    # Move to next/previous workspace dynamically
+    bind=SUPER SHIFT, Left, movetoworkspace, -1
+    bind=SUPER SHIFT, Right, movetoworkspace, +1
+
+    # Move workspaces between monitors
+    bind=SUPER, O, moveworkspacetomonitor, next
+    
+    # Move current windows between monitors
+    #bind=SUPER, Shift, O, movewindow, mon:next
+
+    # Resize floating window with arrow keys (i3-style)
+    bind=SUPER ALT, Left, resizeactive, -40 0
+    bind=SUPER ALT, Right, resizeactive, 40 0
+    bind=SUPER ALT, Up, resizeactive, 0 -40
+    bind=SUPER ALT, Down, resizeactive, 0 40
+
+    # Resize floating window with right mouse button
+    bindm = SUPER, mouse:273, resizewindow
+    # Drag a floating window with left mouse button
+    bindm = SUPER, mouse:272, movewindow
+
     # Status bar (Waybar)
     exec-once=waybar &
 
@@ -52,6 +96,10 @@ input {
     # Wallpaper
     exec-once=swww init &
     exec-once=swww img ~/Pictures/wallpaper.jpg &
+
+    # Keybinding: Super + Shift + S for a screenshot
+    bind=SUPER SHIFT, T, exec, notify-send "Hyprland bind virker!"
+    bind=SUPER SHIFT, S, exec, grimblast copysave area ~/Pictures/Screenshots/
   '';
 
   home.file.".config/waybar/config".text = ''
@@ -114,6 +162,7 @@ input {
         "tooltip": false,
         "scroll-step": 5,
         "on-click": "pavucontrol",
+        "ignore-missing": true,
         "icons": {
             "default": ["", ""]
         }

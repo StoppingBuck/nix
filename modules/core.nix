@@ -38,8 +38,7 @@
         QT_QPA_PLATFORM = "wayland";  # Ensure Qt apps use Wayland
         QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
         XDG_SESSION_TYPE = "wayland";
-"XKB_DEFAULT_LAYOUT" = "dk";
-    "XKB_DEFAULT_VARIANT" = "latin1";  # Optional
+        XKB_DEFAULT_LAYOUT = "dk";
     };
     services.xserver = {
 	    enable                      = false;    # Disable X11 as we use Wayland

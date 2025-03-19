@@ -5,6 +5,7 @@
         mpd                 # Music Player Daemon
         #neovim				      # CLI-based text editing
         python3
+        efibootmgr          # For mangling your /boot
 
         # CLI commands
         curl
@@ -36,6 +37,7 @@
         pavucontrol
         wireplumber                 # needed for screensharing
         xdg-desktop-portal-hyprland # needed for screensharing
+        xdg-desktop-portal-wlr
 
         # GNOME-related utils
         adwaita-icon-theme  # This is the default theme, you can install other themes if desired
@@ -50,5 +52,24 @@
         libvdpau            # VDPAU (Video Decode and Presentation API for UNIX)
         nvidia-vaapi-driver # VA-API support for NVIDIA
         vdpauinfo           # Debugging tool for VDPAU
+
+        capitaine-cursors
+        bibata-cursors
+
+        libnotify # Good for notify-send debugging
+    ];
+
+    fonts.enableDefaultPackages = true;
+    environment.variables = {
+      XCURSOR_THEME = "Capitaine Cursors";  # Change based on what you install
+      XCURSOR_SIZE = "24";
+    };
+
+
+    fonts.packages = with pkgs; [
+      nerdfonts
+      font-awesome
+      noto-fonts
+      noto-fonts-emoji
     ];
 }
