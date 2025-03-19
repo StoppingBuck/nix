@@ -27,8 +27,9 @@
       LC_TELEPHONE              = "da_DK.UTF-8";
       LC_TIME                   = "da_DK.UTF-8";
     };
+	
+	services.xserver.xkb.variant = "latin1";
     services.xserver.xkb = {
         layout  = "dk";
-        variant = "";
     };
 }

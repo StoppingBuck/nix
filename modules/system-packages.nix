@@ -33,6 +33,7 @@
         usbutils            # Provides 'lsusb'
 
         # Hyprland-related utils
+        pavucontrol
         wireplumber                 # needed for screensharing
         xdg-desktop-portal-hyprland # needed for screensharing
 
@@ -43,6 +44,7 @@
         gnomeExtensions.appindicator	# For tray in GNOME
 
         # Hardware acceleration for firefox on Nvidia #TODO Not needed on laptop?
+        ffmpeg
         libva               # VA-API (Video Acceleration API) library
         libva-utils         # Debugging tool for VA-API
         libvdpau            # VDPAU (Video Decode and Presentation API for UNIX)

@@ -27,6 +27,8 @@
 
     # Enable networking
     networking.networkmanager.enable    = true;
+    networking.nameservers              = [ "1.1.1.1" "8.8.8.8" ];  # Cloudflare and Google for speed
+    networking.enableIPv6               = false;
 
     # Setup Wayland and GDM as display manager    
     environment.sessionVariables = {
@@ -36,6 +38,8 @@
         QT_QPA_PLATFORM = "wayland";  # Ensure Qt apps use Wayland
         QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
         XDG_SESSION_TYPE = "wayland";
+"XKB_DEFAULT_LAYOUT" = "dk";
+    "XKB_DEFAULT_VARIANT" = "latin1";  # Optional
     };
     services.xserver = {
 	    enable                      = false;    # Disable X11 as we use Wayland
@@ -46,6 +50,20 @@
             autoLogin.delay         = 5;
         };
     };
+
+    security.wrappers.sudo = {
+        setuid = true;
+        owner = "root";
+        group = "root";
+        source = "${pkgs.sudo}/bin/sudo";
+        permissions = lib.mkForce "u+rx,g+x,o+x";  # Force overwrite the default NixOS module with the same value to avoid conflicts
+    };
+
+    environment.etc."sudoers.d/wayland".text = ''
+        Defaults env_keep += "WAYLAND_DISPLAY XDG_RUNTIME_DIR"
+        Defaults env_keep += "DBUS_SESSION_BUS_ADDRESS"
+    '';
+
     services.displayManager.autoLogin.enable    = true;
     services.displayManager.autoLogin.user      = "mpr";
     services.udev.packages                      = [ pkgs.gnome-settings-daemon ]; #TODO ???

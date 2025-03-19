@@ -21,8 +21,26 @@
         shellAliases = {
             ll                      = "ls -l";
             edit-config             = "function _edit_config() { sudo nvim /etc/nixos/\${1}.nix; }; _edit_config";
-            sudo-vscode             = "sudo code --no-sandbox --user-data-dir=/root/.vscode-root";
-            rebuild-nixos           = "sudo sh -c 'cd /etc/nixos && nixos-rebuild switch'";
+            sudo-vscode             = "sudo env WAYLAND_DISPLAY=$WAYLAND_DISPLAY XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR /etc/profiles/per-user/mpr/bin/code --no-sandbox --user-data-dir=/root/.vscode-root";
+            rebuild-nixos = ''
+                echo "Starting NixOS rebuild..."
+    sudo nixos-rebuild switch
+
+    echo "NixOS rebuild completed!"
+
+    echo "Checking if we are in a Wayland session and if Hyprland is running..."
+    echo "WAYLAND_DISPLAY: $WAYLAND_DISPLAY"
+    echo "XDG_SESSION_TYPE: $XDG_SESSION_TYPE"
+
+    if pgrep -fi Hyprland > /dev/null; then
+        echo "Hyprland detected, attempting reload..."
+        hyprctl reload
+        pkill waybar && waybar &
+        echo "Hyprland reload complete!"
+    else
+        echo "Hyprland is not running or detected under a different name. Skipping reload."
+    fi
+            '';
         };
 
         history = {

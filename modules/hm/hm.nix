@@ -28,7 +28,13 @@
       QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
       CLUTTER_BACKEND = "wayland";
       SDL_VIDEODRIVER = "wayland";
-      MOZ_ENABLE_WAYLAND = "1";
+      # The below may be needed for GPU accelerated rendering via VA-API to work in Firefox
+      LIBVA_DRIVER_NAME         = "nvidia"; # Ensures Firefox uses NVIDIA's VA-API driver
+      MOZ_ENABLE_WAYLAND        = "1";      # Enables Wayland support
+      MOZ_WEBRENDER             = "1";      # Enables GPU-based rendering
+      MOZ_X11_EGL               = "1";      # Ensures EGL is used instead of GLX (better performance)
+      MOZ_DISABLE_RDD_SANDBOX   = "1";      # Required for NVIDIA video decoding
+      VDPAU_DRIVER              = "nvidia"; # Forces VDPAU for video decoding
     };
     xdg.enable          = false; #TODO ?
     xdg.userDirs.enable = true;
@@ -64,9 +70,6 @@
       slurp       # Select region for screenshot
       waybar      # Status bar
       wlogout     #TODO ??
-      wofi        # App launcher
-      
-      
     ];
 
     ########
@@ -84,6 +87,39 @@
 
     programs.firefox = {
       enable = true;
+      profiles.default = {
+        settings = {
+          "dom.ipc.processCount"              = 8;                            # Increase the number of content processes
+          "javascript.options.baselinejit"    = true;                         # Optimize JS execution
+          "javascript.options.ion"            = true;                         # Enable IonMonkey JIT compiler
+          "javascript.options.wasm"           = true;                         # Enable WebAssembly
+          "network.ssl_tokens_cache_capacity" = 512;                          # Reduce unnecessary HTTPS handshakes
+          "network.trr.mode"                  = 2;                            # Enables DNS-over-HTTPS
+          "network.trr.uri"                   = "https://1.1.1.1/dns-query";  # Cloudflare DoH
+          "network.trr.bootstrapAddress"      = "1.1.1.1";                    # Bootstrap DNS for faster resolution
+          "security.ssl.enable_ocsp_stapling" = false;                        # Reduce unnecessary HTTPS handshakes
+
+          # Redirect to Piped to get rid of all the slow Javascript
+          "network.http.referer.spoofSource"  = true;
+
+          # Force-Enable NVIDIA Hardware Decoding
+          "media.hardware-video-decoding.force-enabled"   = true;
+          "media.rdd-ffmpeg.enabled"                      = true;
+          "media.ffmpeg.vaapi.enabled"                    = true;
+          "media.navigator.mediadatadecoder_vpx_enabled"  = true;
+          "media.navigator.mediadatadecoder_h264_enabled" = true;
+          "gfx.webrender.all"                             = true;
+          "layers.gpu-process.enabled"                    = true;
+          "media.wmf.enabled"                             = true;
+          "media.webm.enabled"                            = false;  # Disable VP9, ensuring YouTube only loads H.264.
+          "media.av1.enabled"                             = false;  # Disable AV1, ensuring YouTube only loads H.264.
+        };
+        userChrome = ''
+          @-moz-document domain(youtube.com) {
+            * { display: none !important; }
+          }
+        '';
+      };
       policies = {
         DisableTelemetry = false;           # I don't trust Mozilla not to be idiots, but I do trust them not to be evil
         DisablePocket = false;              # I actually want to use Pocket. L'horreur!

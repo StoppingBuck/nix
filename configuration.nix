@@ -27,10 +27,13 @@
   services.dbus.enable                = true;                         # D-Bus is needed for notifications, waybar, etc.
   services.printing.enable            = true;                         # Enable CUPS to print documents.
 
-  environment.variables = {
-    # The below may be needed for GPU accelerated rendering via VA-API to work in Firefox
-    LIBVA_DRIVER_NAME         = "nvidia";
-    MOZ_DISABLE_RDD_SANDBOX   = "1";
-    VDPAU_DRIVER              = "nvidia";
+  # Move Firefox cache to RAM to speed it up
+  fileSystems."/home/mpr/.mozilla/firefox/cache" = {
+    device = "tmpfs";
+    fsType = "tmpfs";
+    options = [ "size=512M" "mode=1777" ];
   };
+  # Use ZRAM for faster reads - compress Firefox’s memory pages, reducing disk reads.
+  zramSwap.enable         = true;
+  zramSwap.memoryPercent  = 50;
 }
