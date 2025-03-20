@@ -2,7 +2,6 @@
 
 {
     environment.systemPackages = with pkgs; [
-        mpd                 # Music Player Daemon
         #neovim				      # CLI-based text editing
         python3
         efibootmgr          # For mangling your /boot
@@ -35,6 +34,8 @@
 
         # Hyprland-related utils
         pavucontrol
+        kitty
+        wofi
         wireplumber                 # needed for screensharing
         xdg-desktop-portal-hyprland # needed for screensharing
         xdg-desktop-portal-wlr
@@ -57,6 +58,22 @@
         bibata-cursors
 
         libnotify # Good for notify-send debugging
+
+        # Hyprland
+        grimblast   # Screenshot tool
+        hypridle    # Auto-locking the screen
+        hyprlock    # Lock screen
+        hyprpaper   # Wallpaper daemon
+        waybar      # Status bar
+        wlogout     #TODO ??
+
+        yazi  # File navigation in CLI
+        ueberzugpp  # Enables image previews
+        ffmpegthumbnailer  # Video thumbnails
+        poppler  # PDF previews
+        exiftool  # Metadata previews
+
+        go
     ];
 
     fonts.enableDefaultPackages = true;

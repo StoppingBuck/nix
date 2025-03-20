@@ -18,6 +18,9 @@
     ./modules/hm/hm.nix
   ];
 
+  
+
+
   system.stateVersion                 = "24.11";                      # Do not change this unless you want things to go wonky
   nix.settings.experimental-features  = [ "nix-command" "flakes" ];   #TODO Embrace the future
   nix.settings.show-trace             = false;                        #TODO Doesn't work

@@ -60,13 +60,8 @@
       #ytui-music
       zsh-fzf-tab
 
-      # Hyprland
-      grimblast   # Screenshot tool
-      hypridle    # Auto-locking the screen
-      hyprlock    # Lock screen
-      hyprpaper   # Wallpaper daemon
-      waybar      # Status bar
-      wlogout     #TODO ??
+      mpc # MPD client for triggering manual rescans
+      mpd
     ];
 
     ########
@@ -74,6 +69,57 @@
     # Use programs.<program>.enable if you want more advanced configuration and integration, such as configuring the program’s settings, applying security patches, or adjusting system settings specific to the application.
     # This causes home-manager to take over managing the package and its options. For a list of available options, check https://home-manager-options.extranix.com
     ########
+
+    home.file.".local/bin/pcloud-ui".text = ''
+  #!/bin/sh
+  ( /run/current-system/sw/bin/pcloud --ui || true ) & disown
+'';
+
+    home.file.".config/yazi/yazi.toml".text = ''
+      [preview]
+      ueberzugpp = true
+    '';
+
+
+  # Declaratively set the Wofi theme
+home.file.".config/wofi/style.css".text = ''
+    window {
+        margin: 5px;
+        border: 2px solid #89b4fa;
+        background-color: #1e1e2e;
+    }
+
+    #entry {
+        padding: 5px;
+        background-color: #313244;
+        color: #cdd6f4;
+    }
+
+    #entry:selected {
+        background-color: #89b4fa;
+        color: #1e1e2e;
+    }
+  '';
+
+    
+
+    programs.ncmpcpp = {
+      enable = true;
+      settings = {
+        mpd_host = "localhost";
+        mpd_port = 6600;
+        visualizer_output_name = "my_fifo";
+        visualizer_in_stereo = "yes";
+      };
+    };
+
+  #TODO This service is dogshit w/r/t config handling
+  #services.mpd = {
+  #    enable = true;
+  #    musicDirectory = "/home/mpr/pCloudDrive/mp/music"; # Your music location
+  #  };
+
+  
 
     services.mako = {
       enable = true;
@@ -250,13 +296,5 @@
       loop-file=inf
       image-display-duration=inf  # Forces MPV to keep playing image files instead of treating them as a single frame, this allowing autoload to work
     '';
-
-    programs.kitty = {
-      enable = true;
-      extraConfig = ''
-        map ctrl+left send_text all \x1b[1;5D
-        map ctrl+right send_text all \x1b[1;5C
-      '';
-    };
   };
 }

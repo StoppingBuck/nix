@@ -27,8 +27,38 @@
 
     # Enable networking
     networking.networkmanager.enable    = true;
-    networking.nameservers              = [ "1.1.1.1" "8.8.8.8" ];  # Cloudflare and Google for speed
-    networking.enableIPv6               = false;
+    networking.enableIPv6 = false;
+
+# Force NetworkManager to use only static DNS
+networking.networkmanager.dns = "systemd-resolved";
+# Override NetworkManager to ignore DNS from DHCP
+environment.etc."NetworkManager/conf.d/dns.conf".text = ''
+  [main]
+  dns=systemd-resolved
+
+  [global-dns]
+  servers=1.1.1.1,8.8.8.8
+
+  [global-dns-domain-*]
+  servers=1.1.1.1,8.8.8.8
+
+  [connection]
+  ignore-auto-dns=true
+'';
+
+# Ensure systemd-resolved is enabled
+services.resolved.enable = true;
+services.resolved.extraConfig = ''
+  DNS=1.1.1.1 8.8.8.8
+  Domains=~.
+  DNSSEC=no
+  MulticastDNS=no
+  LLMNR=no
+  Cache=no
+  DNSStubListener=no
+  FallbackDNS=
+  UseDNS=no
+'';
 
     # Setup Wayland and GDM as display manager    
     environment.sessionVariables = {
@@ -75,6 +105,7 @@
     security.rtkit.enable                       = true;
     services.pipewire = {
       enable                                    = true;
+        audio.enable = true;
       alsa.enable                               = true;
       alsa.support32Bit                         = true;
       pulse.enable                              = true;

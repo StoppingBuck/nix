@@ -1,15 +1,6 @@
 { config, pkgs, lib, ... }: {
 
-  programs.wofi = {
-    enable = true;
-    settings = {
-      width = "50%";          # Adjust width
-      height = "50%";         # Adjust height
-      hide_search = false;    # Show search bar
-      insensitive = true;     # Case-insensitive search
-      allow_markup = true;    # Enable markup in results
-    };
-  };
+   
 
   home.file.".config/hypr/hyprland.conf".text = ''
 
@@ -24,25 +15,40 @@ exec-once = sleep 2 && gtk-launch pcloud
     env = XCURSOR_THEME,capitaine-cursors
     env = XCURSOR_SIZE,24
 
-    # Monitors
-    # Force monitor positions
+    # Force monitor positions and bind workspaces
+    #TODO Crappy hack. Fix it
+    # DVI-D-1 = Left monitor
+    # HDMI-A-1 = Right monitor
     exec-once=hyprctl keyword monitor DVI-D-1,1920x1080@60Hz,0x0,1
     exec-once=hyprctl keyword monitor HDMI-A-1,1920x1080@60Hz,1920x0,1
+    workspace=1,monitor:DVI-D-1
+    workspace=2,monitor:HDMI-A-1
+    workspace=3,monitor:HDMI-A-1
+    workspace=4,monitor:HDMI-A-1
+    workspace=5,monitor:DVI-D-1
 
-    # Keybindings
+    # Keybindings:
+    # SUPER + Enter = terminal
+    # SUPER + Q = close app
+    # SUPER + D = app launcher
+    # SUPER + F = fullscreen mode
+    # SUPER + V = Toggle floating window
+    # SUPER + SHIFT + S = Screenshot
+    # SUPER + SPACE = Lock screen
+    
     bind=SUPER, RETURN, exec, kitty
     bind=SUPER, Q, killactive,
     bind=SUPER, D, exec, wofi --show drun
     bind=SUPER, F, fullscreen,
     bind=SUPER, V, togglefloating,
+    bind=SUPER SHIFT, S, exec, grimblast copysave area ~/Pictures/Screenshots/
     bind=SUPER, SPACE, exec, swaylock
 
-    # Move focus between windows
+    # Move focus between windows using SUPER + arrow or hjkl
     bind=SUPER, Left, movefocus, l
     bind=SUPER, Right, movefocus, r
     bind=SUPER, Up, movefocus, u
     bind=SUPER, Down, movefocus, d
-    # Vim-style
     bind=SUPER, H, movefocus, l
     bind=SUPER, L, movefocus, r
     bind=SUPER, K, movefocus, u
@@ -54,26 +60,31 @@ exec-once = sleep 2 && gtk-launch pcloud
     bind=SUPER SHIFT, Up, swapwindow, u
     bind=SUPER SHIFT, Down, swapwindow, d
 
-    # Move between workspaces
+    # Move focus between workspaces with SUPER + [1-5]
     bind=SUPER, 1, workspace, 1
     bind=SUPER, 2, workspace, 2
     bind=SUPER, 3, workspace, 3
     bind=SUPER, 4, workspace, 4
+    bind=SUPER, 5, workspace, 5
 
-    # Move windows between workspaces
+    # Move windows between workspaces with SUPER + SHIFT + [1-5]
     bind=SUPER SHIFT, 1, movetoworkspace, 1
     bind=SUPER SHIFT, 2, movetoworkspace, 2
     bind=SUPER SHIFT, 3, movetoworkspace, 3
     bind=SUPER SHIFT, 4, movetoworkspace, 4
+    bind=SUPER SHIFT, 5, movetoworkspace, 5
 
     # Move to next/previous workspace dynamically
-    bind=SUPER SHIFT, Left, movetoworkspace, -1
-    bind=SUPER SHIFT, Right, movetoworkspace, +1
+    #TODO Duplicate bindings. Find something else
+    #bind=SUPER SHIFT, Left, movetoworkspace, -1
+    #bind=SUPER SHIFT, Right, movetoworkspace, +1
 
     # Move workspaces between monitors
+    #TODO Doesn't work
     bind=SUPER, O, moveworkspacetomonitor, next
     
     # Move current windows between monitors
+    #TODO Doesn't work
     #bind=SUPER, Shift, O, movewindow, mon:next
 
     # Resize floating window with arrow keys (i3-style)
@@ -82,25 +93,39 @@ exec-once = sleep 2 && gtk-launch pcloud
     bind=SUPER ALT, Up, resizeactive, 0 -40
     bind=SUPER ALT, Down, resizeactive, 0 40
 
-    # Resize floating window with right mouse button
+    # Use 'scratchpad' workspace
+    bind=SUPER SHIFT, H, movetoworkspace, e+0
+    bind=SUPER SHIFT, G, togglespecialworkspace
+
+    # Mouse bindings:
+    # Drag a floating window with SUPER + left mouse button
+    # Resize floating window with SUPER + right mouse button
     bindm = SUPER, mouse:273, resizewindow
-    # Drag a floating window with left mouse button
     bindm = SUPER, mouse:272, movewindow
 
     # Status bar (Waybar)
     exec-once=waybar &
-
-    # Notifications (Dunst)
-    exec-once=dunst &
-
-    # Wallpaper
-    exec-once=swww init &
-    exec-once=swww img ~/Pictures/wallpaper.jpg &
-
-    # Keybinding: Super + Shift + S for a screenshot
-    bind=SUPER SHIFT, T, exec, notify-send "Hyprland bind virker!"
-    bind=SUPER SHIFT, S, exec, grimblast copysave area ~/Pictures/Screenshots/
   '';
+
+   home.file.".config/mpd/mpd.conf".text = ''
+        music_directory    "~/pCloudDrive/mp/music"
+        db_file           "~/.config/mpd/tag_cache"
+        state_file        "~/.config/mpd/state"
+
+        audio_output {
+            type "pipewire"
+            name "PipeWire Sound Server"
+        }
+
+        db_file "/home/mpr/.config/mpd/tag_cache"  # Store DB in user dir
+        state_file "/home/mpr/.config/mpd/state"  # Store state in user dir
+
+        # Increase buffer size to prevent stuttering
+        audio_buffer_size "4096"
+
+        # Disable Avahi
+        zeroconf_enabled "no"
+    '';
 
   home.file.".config/waybar/config".text = ''
 {

@@ -6,7 +6,7 @@
     users.users.mpr = {
         isNormalUser    = true;
         description     = "Mads Peter Rommedahl";
-        extraGroups     = [ "networkmanager" "wheel" ];
+        extraGroups     = [ "audio" "networkmanager" "wheel" ];
     }; 
 
     programs.zsh.enable     =  true;    # Needed because we set mpr's default shell to zsh.
