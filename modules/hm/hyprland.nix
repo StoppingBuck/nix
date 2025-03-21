@@ -1,6 +1,8 @@
 { config, pkgs, lib, ... }: {
 
-   
+  home.file.".config/kitty/kitty.conf".text = ''
+    confirm_os_window_close 0
+  ''; 
 
   home.file.".config/hypr/hyprland.conf".text = ''
 
@@ -42,7 +44,7 @@ exec-once = sleep 2 && gtk-launch pcloud
     bind=SUPER, F, fullscreen,
     bind=SUPER, V, togglefloating,
     bind=SUPER SHIFT, S, exec, grimblast copysave area ~/Pictures/Screenshots/
-    bind=SUPER, SPACE, exec, swaylock
+    bind=SUPER, SPACE, exec, hyprlock
 
     # Move focus between windows using SUPER + arrow or hjkl
     bind=SUPER, Left, movefocus, l
@@ -94,8 +96,8 @@ exec-once = sleep 2 && gtk-launch pcloud
     bind=SUPER ALT, Down, resizeactive, 0 40
 
     # Use 'scratchpad' workspace
-    bind=SUPER SHIFT, H, movetoworkspace, e+0
-    bind=SUPER SHIFT, G, togglespecialworkspace
+    bind=SUPER SHIFT, 0, movetoworkspace, special
+    bind=SUPER, 0, togglespecialworkspace
 
     # Mouse bindings:
     # Drag a floating window with SUPER + left mouse button
@@ -154,6 +156,7 @@ exec-once = sleep 2 && gtk-launch pcloud
 
     "clock": {
         "format": "{:%A, %d %B %H:%M}",
+        "locale": "da_DK.UTF-8",
         "tooltip-format": "<big>{:%Y-%m-%d %H:%M:%S}</big>",
         "format-alt": "{:%Y-%m-%d %H:%M}"
     },

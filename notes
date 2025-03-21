@@ -8,17 +8,15 @@ CLI apps
 - WeeChat - IM
 - Obsidian-cli
 - gcalcli or similar for calendar
-- clevercli - ChatGPT
 https://github.com/kdabir/has - seems cool
 - https://github.com/xtyrrell/undollar sten i skoen
 https://github.com/akavel/up - maybe?
 yank? glances? tiptop instead of btop?
 
 
-    s - Open a web search in your terminal.
+j    s - Open a web search in your terminal.
     hget - Render websites in plain text from your terminal.
     mapscii - Terminal Map Viewer.
-    nasa-cli - Download NASA Picture of the Day.
     getnews.tech - Fetch news headlines from various news outlets.
     trino - Translation of words and phrases.
     translate-shell - Google Translate interface.
@@ -30,20 +28,14 @@ yank? glances? tiptop instead of btop?
     The Fuck - Magnificent app which corrects your previous console command.
     tldr - Simplified and community-driven man pages.
     Wat - Instant, central, community-built docs.
-    teachcode - Guide for the earliest lessons of coding.
     navi - Interactive cheatsheet tool.
     yai - AI powered terminal assistant.
-Processors
 
-    jq - JSON processor.
     yq - YAML processor.
     dasel - JSON/YAML/TOML/XML processor (like jq/yq).
     yaml-cli - Query/update YAML.
     ramda-cli - Process data with functional pipelines.
     xq - XML and HTML beautifier and content extractor.
-
-JSON
-
     jp - JSON parser.
     fx - Command-line JSON viewer.
     vj - Makes JSON human readable.
@@ -51,32 +43,18 @@ JSON
     strip-json-comments-cli - Strip comments from JSON.
     GROQ – JSON processor with queries and projections.
     gron - Make JSON greppable.
-
-YAML
-
     dyff - YAML diff tool.
-
-Columns
-
     parse-columns-cli - Parse text columns to JSON.
     q - Execution of SQL-like queries on CSV/TSV/tabular text file.
-
-Text
-
     figlet - Creates large text out of ASCII characters.
     stegcloak - Hide secrets with invisible characters in plain text securely.
 google-drive-upload - Upload/sync with Google Drive.
 gdrive-downloader - Download files/folders from Google Drive.
 sharing - Send and receive files on your mobile device.
 
-    Search
-
     happyfinder - (another) Fuzzy file finder for the command line.
     find-up-cli - Find a file by walking up parent directories.
-    ripgrep - A line-oriented search tool that recursively searches your current directory for a regex pattern.
-    fzf - A general purpose command-line fuzzy finder, can be used with any list: files/directories, command history, processes, hostnames, bookmarks, git commits, etc.
     fselect - Find files with SQL-like queries.
-    fd - A simple, fast and user-friendly alternative to find.
     broot - Fuzzy finder similar to fzf, but with space usage visualization.
     rare - Real-time regex aggregation and analysis.
     skim - A general fuzzy finder written in rust, similar to fzf.
@@ -86,10 +64,6 @@ https://github.com/pipeseroni/pipes.sh
 
 emoj - Find relevant emoji from text on the command-line.
 emoji-finder - Quickly find and copy emoji to the clipboard via the command-line.
-
-
-Tanker om træ:
-
 
 Når du installerer NixOS, sætter du manuelt hostname én gang, f.eks.:
 
